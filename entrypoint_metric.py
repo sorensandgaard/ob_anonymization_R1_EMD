@@ -1,31 +1,29 @@
 import argparse
 import os
+import requests
+import subprocess
 
-def concatenate_input_content(input_files):
-    concatenated_content = ""  # Initialize an empty string to hold the concatenated content
+def create_file(out_filename,in_url):
+    r = requests.get(in_url, allow_redirects=True)
+    open(out_filename, 'wb').write(r.content)
 
-    # Iterate over each input file
-    for input_file in input_files:
-        # Open each input file in read mode and read its content
-        with open(input_file, 'r') as file:
-            # Read the content of the input file and append it to the concatenated_content string
-            concatenated_content += file.read()
-            # Optionally, you can add a newline between the content of each file
-            concatenated_content += '\n'
-
-    return concatenated_content
-
-
-def run_metric(output_dir, name, input_files):
+def run_metric(output_dir, name, case_pos, ctrl_pos):
     # Create the output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
+    log_file = os.path.join(output_dir, f'{name}.log.txt')
 
-    content = concatenate_input_content(input_files)
+    # Download R script to benchmark folder
+    R_script_url = "https://raw.githubusercontent.com/sorensandgaard/ob_anonymization_R1_EMD/main/earth_movers_distance.R"
+    script_R_file = os.path.join(output_dir, f'earth_movers_distance.R')
+    create_file(script_R_file,R_script_url)
 
-    metric_results_file = os.path.join(output_dir, f'{name}.results.txt')
-    content += f"4. Running metric using parameters into {metric_results_file}"
+    # Run R script
+    outfile_pos = f"{output_dir}/{name}.somefile.txt"
+    R_command = f"Rscript {script_R_file} {case_pos} {ctrl_pos} {outfile_pos}"
+    # a = subprocess.run(R_command.split(),capture_output=True,text=True)
+    content = f"R command:\n{R_command}\n"
 
-    with open(metric_results_file, 'w') as file:
+    with open(log_file, 'w') as file:
         file.write(content)
 
 
@@ -36,19 +34,16 @@ def main():
     # Add arguments
     parser.add_argument('--output_dir', type=str, help='output directory where metic will store results.')
     parser.add_argument('--name', type=str, help='name of the dataset')
-    parser.add_argument('--methods.mapping', type=str, help='input file #1.')
-#    parser.add_argument('--data.meta', type=str, help='input file #2.')
-#    parser.add_argument('--data.data_specific_params', type=str, help='input file #3.')
+    parser.add_argument('--case_expr', type=str, help='Anonymized version of data')
+    parser.add_argument('--ctrl_expr', type=str, help='Control version of data')
 
     # Parse arguments
     args = parser.parse_args()
 
-    methods_mapping_input = getattr(args, 'methods.mapping')
-#    data_meta_input = getattr(args, 'data.meta')
-#    data_params_input = getattr(args, 'data.data_specific_params')
-    input_files = [methods_mapping_input]
+    case_pos = getattr(args, 'case_expr')
+    ctrl_pos = getattr(args, 'ctrl_expr')
 
-    run_metric(args.output_dir, args.name, input_files)
+    run_metric(args.output_dir, args.name, case_pos, ctrl_pos)
 
 
 if __name__ == "__main__":
