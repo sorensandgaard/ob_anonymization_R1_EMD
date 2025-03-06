@@ -76,13 +76,15 @@ emds <- parLapply(cl = cl,X = 1:genecount, function(i){
              read_count_anon = sum(tmp_2))
 })
 
+# Stop parallelization
+stopCluster(cl = cl)
+rm(cl)
 
+# Create dataframe of EMDs
+emds <- Reduce("rbind", emds)
+rownames(emds) <- emds$gene
+emds <- emds %>% 
+  mutate(difference = read_count_orig - read_count_anon)
 
-
-
-
-
-
-
-### Write output ###
-save(XXoutput_objectXX,file = outdir)
+### Write EMD dataframe to file ###
+write.table(emds, file = outdir, sep="\t")
