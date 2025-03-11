@@ -28,7 +28,7 @@ ctrl_obj <- NormalizeData(ctrl_obj)
 
 # Convert Seurat objects to expression matrices
 expr_orig <- case_obj[["RNA"]]$data
-expr_anon <- case_obj[["RNA"]]$data
+expr_anon <- ctrl_obj[["RNA"]]$data
 
 # Check genelists are identical and save genelist and genecount
 genelist_orig <- rownames(expr_orig)
