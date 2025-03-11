@@ -23,6 +23,9 @@ def run_metric(output_dir, name, case_pos, ctrl_pos):
     a = subprocess.run(R_command.split(),capture_output=True,text=True)
     content = f"EMD output:\n{a.stdout}\n"
 
+    cleanup_command = f"rm {script_R_file}"
+    a = subprocess.run(cleanup_command.split(),capture_output=True,text=True)
+
     with open(log_file, 'w') as file:
         file.write(content)
 
