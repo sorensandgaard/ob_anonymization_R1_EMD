@@ -59,4 +59,4 @@ emd_results <- calculate_emd(combined_matrix, labels,nperm = 2,parallel = F)
 
 emd_results <- emd_results$emd
 
-outdir
+write.csv(emd_results,outdir)
