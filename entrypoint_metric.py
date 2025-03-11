@@ -20,8 +20,8 @@ def run_metric(output_dir, name, case_pos, ctrl_pos):
     # Run R script
     outfile_pos = f"{output_dir}/{name}.somefile.txt"
     R_command = f"Rscript {script_R_file} {case_pos} {ctrl_pos} {outfile_pos}"
-    # a = subprocess.run(R_command.split(),capture_output=True,text=True)
-    content = f"R command:\n{R_command}\n"
+    a = subprocess.run(R_command.split(),capture_output=True,text=True)
+    content = f"EMD output:\n{a.stdout}\n"
 
     with open(log_file, 'w') as file:
         file.write(content)
