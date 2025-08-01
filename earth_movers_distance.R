@@ -3,6 +3,9 @@ library("tidyverse")
 library("Seurat")
 library("Matrix")
 library("EMDomics")
+library("transport")
+library("jsonlite")
+library("EMDomics")
 
 rm(list=ls())
 
@@ -60,3 +63,29 @@ emd_results <- calculate_emd(combined_matrix, labels,nperm = 2,parallel = F)
 emd_results <- emd_results$emd
 
 write.csv(emd_results,outdir)
+
+json_obj <- list(
+  module = "R1_EMD",
+  timestamp = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
+  metrics = list(
+    earth_movers_distance = list(
+      gene_wise = list(
+        mean = mean(emd_results),
+        median = median(emd_results),
+        std = sd(emd_results),
+        min = min(emd_results),
+        max = max(emd_results),
+        q25 = quantile(emd_results, 0.25),
+        q75 = quantile(emd_results, 0.75)
+      ),
+      poorly_matched_genes = list(
+        count = sum(emd_results > 1.0),
+        threshold = 1.0,
+        gene_ids = names(emd_results)[emd_results > 1.0],
+        emd_values = unname(emd_results[emd_results > 1.0])
+      )
+    )
+  )
+)
+
+write_json(json_obj, outdir, pretty = TRUE, auto_unbox = TRUE)
