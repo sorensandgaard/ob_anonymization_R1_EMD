@@ -62,8 +62,6 @@ emd_results <- calculate_emd(combined_matrix, labels,nperm = 2,parallel = F)
 
 emd_results <- emd_results$emd
 
-write.csv(emd_results,outdir)
-
 json_obj <- list(
   module = "R1_EMD",
   timestamp = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
