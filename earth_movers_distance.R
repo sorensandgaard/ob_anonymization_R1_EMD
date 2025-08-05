@@ -94,4 +94,5 @@ json_obj <- list(
 print("Writing JSON")
 print(outdir)
 print(json_obj)
+write_json(json_obj, "/home/projects/dtu_00062/people/sorsan/ob_anonymization_dataloss/test.json", pretty = TRUE, auto_unbox = TRUE)
 write_json(json_obj, outdir, pretty = TRUE, auto_unbox = TRUE)
