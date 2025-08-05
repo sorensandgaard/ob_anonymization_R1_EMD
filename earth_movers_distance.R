@@ -3,7 +3,6 @@ library("tidyverse")
 library("Seurat")
 library("Matrix")
 library("EMDomics")
-library("transport")
 library("jsonlite")
 library("EMDomics")
 
