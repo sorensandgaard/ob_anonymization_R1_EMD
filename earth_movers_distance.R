@@ -92,4 +92,6 @@ json_obj <- list(
 )
 
 print("Writing JSON")
+print(outdir)
+print(json_obj)
 write_json(json_obj, outdir, pretty = TRUE, auto_unbox = TRUE)
