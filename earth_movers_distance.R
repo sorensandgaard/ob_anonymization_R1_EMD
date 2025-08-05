@@ -86,4 +86,4 @@ json_obj <- list(
   )
 )
 
-write_json(json_obj, outdir, pretty = TRUE, auto_unbox = TRUE)
+write_json(json_obj, "/home/projects/dtu_00062/people/sorsan/ob_anonymization_benchmark/m1.json, pretty = TRUE, auto_unbox = TRUE)
