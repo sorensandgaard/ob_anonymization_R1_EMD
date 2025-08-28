@@ -84,8 +84,12 @@ json_obj <- list(
       poorly_matched_genes = list(
         count = sum(emd_results > 1.0),
         threshold = 1.0,
-        gene_ids = names(emd_results)[emd_results > 1.0],
+        gene_ids = names(emd_results[emd_results > 1.0]),
         emd_values = unname(emd_results[emd_results > 1.0])
+      ),
+      all_results = list(
+        gene_ids = names(emd_results),
+        emd_values = unname(emd_results)
       )
     )
   )
