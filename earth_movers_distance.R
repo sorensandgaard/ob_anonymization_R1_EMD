@@ -64,7 +64,8 @@ names(labels) <- colnames(combined_matrix)
 print("Calculating EMD")
 emd_results <- calculate_emd(combined_matrix, labels,nperm = 2,parallel = F)
 
-emd_results <- emd_results$emd
+emd_results <- data.frame(emd_results$emd)
+poor_genes <- filter(emd_results,emd > 1.0)
 
 print("Creating JSON object")
 json_obj <- list(
@@ -73,30 +74,28 @@ json_obj <- list(
   metrics = list(
     earth_movers_distance = list(
       gene_wise = list(
-        mean = mean(emd_results),
-        median = median(emd_results),
-        std = sd(emd_results),
-        min = min(emd_results),
-        max = max(emd_results),
-        q25 = quantile(emd_results, 0.25),
-        q75 = quantile(emd_results, 0.75)
+        mean = mean(emd_results$emd),
+        median = median(emd_results$emd),
+        sd = sd(emd_results$emd),
+        min = min(emd_results$emd),
+        max = max(emd_results$emd),
+        q25 = quantile(emd_results$emd, 0.25),
+        q75 = quantile(emd_results$emd, 0.75)
       ),
       poorly_matched_genes = list(
-        count = sum(emd_results > 1.0),
+        count = sum(emd_results$emd > 1.0),
         threshold = 1.0,
-        gene_ids = names(emd_results[emd_results > 1.0]),
-        emd_values = unname(emd_results[emd_results > 1.0])
+        gene_ids = rownames(poor_genes),
+        emd_values = poor_genes$emd
       ),
       all_results = list(
-        gene_ids = names(emd_results),
-        emd_values = unname(emd_results)
+        gene_ids = rownames(emd_results),
+        emd_values = emd_results$emd
       )
     )
   )
 )
 
 print("Writing JSON")
-print(outdir)
-print(json_obj)
 write_json(json_obj, "/home/projects/dtu_00062/people/sorsan/ob_anonymization_dataloss/test.json", pretty = TRUE, auto_unbox = TRUE)
 write_json(json_obj, outdir, pretty = TRUE, auto_unbox = TRUE)
